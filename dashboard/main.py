@@ -56,13 +56,16 @@ def live_data(now):
         errors.append("weather")
         traceback.print_exc()
         raise  # weather is the core of the dashboard; fail the run so the last good image stays up
-    try:
-        url = os.environ["ICAL_URL"]
+    url = os.environ.get("ICAL_URL", "").strip()
+    if not url:
+        data["calendar"] = {now.date(): [{"time": "", "title": "Calendar not connected yet"}]}
+    else:
+      try:
         data["calendar"] = fetch.calendar(url)
-    except Exception:
+      except Exception:
         errors.append("calendar")
         traceback.print_exc()
-        data["calendar"] = {now.date(): [{"time": "", "title": "(calendar unavailable)"}]}
+        data["calendar"] = {now.date(): [{"time": "", "title": "Calendar unavailable - will retry"}]}
     data["chores"] = fetch.chores(os.path.join(ROOT, "chores.txt"))
     data["fact"] = fetch.kid_fact(os.path.join(ROOT, "dashboard", "facts.txt"), now.date())
     return data
