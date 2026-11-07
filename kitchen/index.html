@@ -140,7 +140,7 @@
   </div>
   <div class="radio" id="radio"><span class="lbl">Radio</span></div>
 </div>
-<div class="status" id="status"></div>
+<div class="status" id="status"></div><div style="position:fixed;left:6px;bottom:2px;font-size:9px;opacity:.35">v7</div>
 <audio id="player" preload="none"></audio>
 
 <script>
@@ -280,7 +280,7 @@
   }
   function play(idx) {
     if (idx === current) { stopRadio(); return; }
-    stopRadio(); current = idx; setState(idx, "loading");
+    stopRadio(); $("status").innerHTML = ""; current = idx; setState(idx, "loading");
     var url = STATIONS[idx].url;
     if (/\.m3u8/.test(url) && !nativeHls && !window.Hls) {
       var s = document.createElement("script");
@@ -292,8 +292,14 @@
       startUrl(url);
     }
   }
-  player.addEventListener("playing", function () { if (current >= 0) setState(current, "on"); });
-  player.addEventListener("error", function () { if (current >= 0) { $("status").innerHTML = "Station unavailable"; stopRadio(); } });
+  player.addEventListener("playing", function () { if (current >= 0) { setState(current, "on"); $("status").innerHTML = ""; } });
+  player.addEventListener("error", function () {
+    // Ignore errors from clearing the previous station (no source, or not the station we asked for)
+    if (current < 0 || hls) return;
+    var src = player.getAttribute("src");
+    if (!src || src !== STATIONS[current].url) return;
+    $("status").innerHTML = "Station unavailable"; stopRadio();
+  });
 
   function buildRadio() {
     var bar = $("radio");
