@@ -95,16 +95,17 @@
   .stop { margin-right: 0; }
   .status { position: fixed; right: 16px; top: 10px; font-size: 12px; color: #a39c92; }
 
-  /* Fixed heights for old WebViews that don't shrink flex children (600 total):
-     12 top padding + 480 main + 108 radio */
-  .main { height: 480px; -webkit-flex: none; flex: none; }
-  .left { height: 480px; }
-  .right { height: 480px; }
-  .cal { height: 318px; -webkit-flex: none; flex: none; }
+  /* Fixed heights for old WebViews that don't shrink flex children.
+     600 canvas = 12 top + 410 main + 140 radio + 38 spare at the bottom */
+  .main { height: 410px; -webkit-flex: none; flex: none; }
+  .left { height: 410px; }
+  .right { height: 410px; }
+  .cal { height: 248px; -webkit-flex: none; flex: none; }
   .bottom { height: 130px; overflow: hidden; }
   .chores, .kids { height: 130px; overflow: hidden; }
-  .radio { height: 108px; overflow: hidden; padding-top: 8px; margin-top: 0; }
-  .st { height: 42px; margin-bottom: 8px; }
+  .radio { height: 140px; overflow: hidden; padding-top: 14px; margin-top: 10px; }
+  .st { height: 44px; margin: 0 12px 14px 0; }
+  .stop { margin-right: 0; }
 
   /* Countdown and fact: two stacked half-height boxes */
   .kidcol { width: 340px; height: 130px; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; }
@@ -140,7 +141,7 @@
   </div>
   <div class="radio" id="radio"><span class="lbl">Radio</span></div>
 </div>
-<div class="status" id="status"></div><div style="position:fixed;left:6px;bottom:2px;font-size:9px;opacity:.35">v7</div>
+<div class="status" id="status"></div><div style="position:fixed;left:6px;bottom:2px;font-size:9px;opacity:.35">v8</div>
 <audio id="player" preload="none"></audio>
 
 <script>
@@ -317,7 +318,9 @@
 
   // Scale the 1024x600 canvas to fit the visible area, centred.
   function fit() {
-    var w = window.innerWidth, h = window.innerHeight;
+    var de = document.documentElement;
+    var w = Math.min(window.innerWidth, de.clientWidth || 9999, screen.width || 9999);
+    var h = Math.min(window.innerHeight, de.clientHeight || 9999, screen.height || 9999);
     var sc = Math.min(w / 1024, h / 600);
     var x = Math.max(0, (w - 1024 * sc) / 2), y = Math.max(0, (h - 600 * sc) / 2);
     var t = "translate(" + x + "px," + y + "px) scale(" + sc + ")";
@@ -333,6 +336,11 @@
   document.addEventListener("click", goFull, true);
   document.addEventListener("touchend", goFull, true);
   window.addEventListener("resize", fit);
+  document.addEventListener("fullscreenchange", function () { setTimeout(fit, 300); });
+  document.addEventListener("webkitfullscreenchange", function () { setTimeout(fit, 300); });
+  // Old browsers can report the size late after going full screen: re-check for a while
+  var fitCount = 0, fitTimer = setInterval(function () { fit(); if (++fitCount > 20) clearInterval(fitTimer); }, 1000);
+  document.addEventListener("touchend", function () { fitCount = 0; }, true);
   window.addEventListener("orientationchange", function () { setTimeout(fit, 300); });
   fit();
 
