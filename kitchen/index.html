@@ -116,6 +116,12 @@
   .xmas { font-size: 21px; font-weight: 700; }
   .fh { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 700; opacity: .75; }
   .fact { font-size: 14px; margin-top: 2px; line-height: 1.25; }
+
+  /* Calendar: Today and Tomorrow stacked, half height each */
+  .cal { background: transparent !important; padding: 0; border-radius: 0; }
+  .daybox { height: 154px; overflow: hidden; background: #fffaf2; border-radius: 16px; padding: 10px 16px; }
+  .daybox.today { margin-bottom: 10px; border-left: 6px solid #c0392b; }
+  body.night .daybox { background: #1e2126; }
 </style>
 </head>
 <body>
@@ -221,15 +227,21 @@
     $("fc").innerHTML = html;
     $("sun").innerHTML = "Sunrise <b>" + w.sunrise + "</b> &nbsp;&middot;&nbsp; Sunset <b>" + w.sunset + "</b>";
 
+    // Today and tomorrow, always both, in two stacked boxes
+    function isoOf(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+    var t0 = new Date(), t1 = new Date(t0.getFullYear(), t0.getMonth(), t0.getDate() + 1);
+    var want = [[isoOf(t0), "Today"], [isoOf(t1), "Tomorrow"]];
     html = "";
-    for (i = 0; i < data.calendar.length; i++) {
-      var day = data.calendar[i], pills = "", rows = "", j;
-      for (j = 0; j < day.events.length; j++) {
-        var e = day.events[j];
+    for (i = 0; i < want.length; i++) {
+      var events = [], j, k;
+      for (k = 0; k < data.calendar.length; k++) if (data.calendar[k].date === want[i][0]) events = data.calendar[k].events;
+      var pills = "", rows = "";
+      for (j = 0; j < events.length; j++) {
+        var e = events[j];
         if (e.time) rows += '<div class="ev"><span class="t">' + e.time + '</span><span class="n">' + esc(e.title) + "</span></div>";
         else pills += '<span class="pill">' + esc(e.title) + "</span>";
       }
-      html += '<div class="day"><div class="dl">' + dayLabel(day.date) + "</div>" +
+      html += '<div class="daybox' + (i === 0 ? " today" : "") + '"><div class="dl">' + want[i][1] + "</div>" +
               (pills || rows ? pills + rows : '<div class="none">Nothing on</div>') + "</div>";
     }
     $("cal").innerHTML = html;
