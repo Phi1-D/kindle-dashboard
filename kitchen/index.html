@@ -94,6 +94,17 @@
   body.night .st.loading { background: #3a3329; }
   .stop { margin-right: 0; }
   .status { position: fixed; right: 16px; top: 10px; font-size: 12px; color: #a39c92; }
+
+  /* Fixed heights for old WebViews that don't shrink flex children (600 total):
+     12 top padding + 480 main + 108 radio */
+  .main { height: 480px; -webkit-flex: none; flex: none; }
+  .left { height: 480px; }
+  .right { height: 480px; }
+  .cal { height: 318px; -webkit-flex: none; flex: none; }
+  .bottom { height: 130px; overflow: hidden; }
+  .chores, .kids { height: 130px; overflow: hidden; }
+  .radio { height: 108px; overflow: hidden; padding-top: 8px; margin-top: 0; }
+  .st { height: 42px; margin-bottom: 8px; }
 </style>
 </head>
 <body>
