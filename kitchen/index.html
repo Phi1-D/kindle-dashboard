@@ -177,7 +177,7 @@
     $("temp").innerHTML = w.now_temp + "°";
     $("cond").innerHTML = esc(w.now_label) + " &middot; wind " + w.wind + " mph";
     html = "";
-    for (i = 0; i < w.rain_next.length; i++) {
+    for (i = 0; i < w.rain_next.length && i < 3; i++) {
       html += "<span>" + w.rain_next[i][0] + " <b>" + w.rain_next[i][1] + "%</b></span>";
     }
     $("rain").innerHTML = html ? "Rain chance &nbsp;" + html : "";
