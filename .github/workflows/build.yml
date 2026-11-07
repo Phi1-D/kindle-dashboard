@@ -1,0 +1,59 @@
+name: Build Kindle dashboard
+
+on:
+  schedule:
+    # Every 30 min, 05:00–21:30 UTC (covers roughly 06:00–22:30 UK in winter, 06:00–21:30 in summer).
+    # GitHub may run scheduled jobs a few minutes late; that's normal.
+    - cron: "*/30 5-21 * * *"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install fonts and Python packages
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq fonts-dejavu-core
+          pip install -r requirements.txt
+
+      - name: Render dashboard
+        env:
+          ICAL_URL: ${{ secrets.ICAL_URL }}
+        run: python dashboard/main.py
+
+      - name: Give the image its private name
+        env:
+          IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
+        run: |
+          test -n "$IMAGE_NAME" || { echo "Set the IMAGE_NAME secret"; exit 1; }
+          mv public/dash.png "public/${IMAGE_NAME}.png"
+          echo "nothing to see here" > public/index.html
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/deploy-pages@v4
