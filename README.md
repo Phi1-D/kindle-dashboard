@@ -54,6 +54,12 @@ Each push also triggers a fresh dashboard build. Notes:
 
 A log is written to `dashboard/dashboard.log` on the Kindle drive, which is useful if the screen stays blank.
 
+## 4. Kitchen tablet (colour, with radio)
+
+A touch-friendly colour version with a live clock and radio buttons is published at
+`https://phi1-d.github.io/kindle-dashboard/<IMAGE_NAME>/`, designed for a Fire 7 (1024×600, landscape).
+Open it full screen in a kiosk browser app. Edit the stations at the top of the script in `kitchen/index.html`.
+
 ## Privacy
 
 - The calendar link lives only in a GitHub secret. It is never in the code and never public.

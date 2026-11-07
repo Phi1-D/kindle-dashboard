@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="robots" content="noindex, nofollow">
+<title>Kitchen</title>
+<style>
+  /* Written for old Android WebViews (Fire OS 5): flexbox only, no grid, no modern JS. */
+  :root { }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f6f1e9; color: #2a2622;
+    overflow: hidden; -webkit-user-select: none; user-select: none;
+  }
+  body.night { background: #16181c; color: #d9d4cc; }
+
+  .app { display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; height: 100%; padding: 14px 16px 0; }
+  .main { display: -webkit-flex; display: flex; -webkit-flex: 1; flex: 1; min-height: 0; }
+
+  /* Left column */
+  .left { width: 340px; padding-right: 18px; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; }
+  .clock { font-size: 92px; font-weight: 300; line-height: 1; letter-spacing: -2px; }
+  .date { font-size: 21px; margin-top: 4px; color: #8a6e4b; font-weight: 500; }
+  body.night .date { color: #c9a878; }
+
+  .now { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; margin-top: 18px; }
+  .now svg { width: 68px; height: 68px; margin-right: 12px; }
+  .temp { font-size: 52px; font-weight: 600; line-height: 1; }
+  .cond { font-size: 16px; color: #6b635a; margin-top: 4px; }
+  body.night .cond { color: #a39c92; }
+
+  .rain { margin-top: 12px; font-size: 14px; color: #6b635a; }
+  .rain span { display: inline-block; margin-right: 10px; }
+  .rain b { color: #2f6db3; }
+  body.night .rain b { color: #7fb0ea; }
+
+  .fc { display: -webkit-flex; display: flex; margin-top: 12px; }
+  .fc .d { -webkit-flex: 1; flex: 1; background: #fffaf2; border-radius: 12px; padding: 8px 6px; margin-right: 6px; text-align: center; }
+  .fc .d:last-child { margin-right: 0; }
+  body.night .fc .d { background: #22262c; }
+  .fc .dn { font-size: 14px; font-weight: 600; }
+  .fc svg { width: 34px; height: 34px; margin: 2px 0; }
+  .fc .hl { font-size: 14px; }
+  .fc .rp { font-size: 12px; color: #2f6db3; }
+  body.night .fc .rp { color: #7fb0ea; }
+
+  .sun { margin-top: auto; padding-bottom: 10px; font-size: 15px; color: #6b635a; }
+  .sun b { color: #2a2622; font-weight: 600; }
+  body.night .sun, body.night .sun b { color: #a39c92; }
+
+  /* Right column */
+  .right { -webkit-flex: 1; flex: 1; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; min-width: 0; }
+  .h { font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: #8a6e4b; font-weight: 700; margin-bottom: 6px; }
+  body.night .h { color: #c9a878; }
+  .cal { -webkit-flex: 1; flex: 1; overflow: hidden; background: #fffaf2; border-radius: 16px; padding: 12px 16px; }
+  body.night .cal { background: #1e2126; }
+  .day { margin-bottom: 10px; }
+  .dl { font-size: 15px; font-weight: 700; color: #8a6e4b; margin-bottom: 5px; }
+  body.night .dl { color: #c9a878; }
+  .pill { display: inline-block; font-size: 14px; font-weight: 600; padding: 3px 11px; border-radius: 14px; background: #f0e3cf; margin: 0 5px 5px 0; }
+  body.night .pill { background: #3a3329; }
+  .ev { display: -webkit-flex; display: flex; font-size: 18px; padding: 2px 0; }
+  .ev .t { width: 64px; font-weight: 700; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  .ev .n { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .none { font-size: 16px; color: #a39c92; }
+
+  .bottom { display: -webkit-flex; display: flex; margin-top: 10px; }
+  .chores { -webkit-flex: 1; flex: 1; background: #fffaf2; border-radius: 16px; padding: 10px 14px; margin-right: 10px; min-width: 0; }
+  body.night .chores { background: #1e2126; }
+  .chores ul { list-style: none; }
+  .chores li { font-size: 16px; padding: 1px 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .chores li:before { content: "\25A2  "; color: #8a6e4b; }
+  .kids { width: 260px; background: #2f6db3; color: #fff; border-radius: 16px; padding: 10px 14px; }
+  body.night .kids { background: #24456e; }
+  .xmas { font-size: 19px; font-weight: 700; }
+  .fact { font-size: 14px; margin-top: 5px; line-height: 1.3; }
+
+  /* Radio bar */
+  .radio { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; height: 66px; margin-top: 10px; border-top: 1px solid #e3d8c7; }
+  body.night .radio { border-top-color: #2c3036; }
+  .radio .lbl { font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; color: #8a6e4b; font-weight: 700; margin-right: 10px; }
+  .st { -webkit-flex: 1; flex: 1; height: 46px; margin-right: 8px; border-radius: 23px; border: 2px solid #d9c9b1; background: transparent; color: inherit; font-size: 15px; font-weight: 600; font-family: inherit; }
+  body.night .st { border-color: #3a3f46; }
+  .st.on { background: #c0392b; border-color: #c0392b; color: #fff; }
+  .st.loading { background: #f0e3cf; }
+  body.night .st.loading { background: #3a3329; }
+  .stop { width: 80px; -webkit-flex: none; flex: none; margin-right: 0; }
+  .status { position: fixed; right: 16px; top: 10px; font-size: 12px; color: #a39c92; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="main">
+    <div class="left">
+      <div class="clock" id="clock">--:--</div>
+      <div class="date" id="date"></div>
+      <div class="now"><span id="nowIcon"></span><div><div class="temp" id="temp">--°</div><div class="cond" id="cond"></div></div></div>
+      <div class="rain" id="rain"></div>
+      <div class="fc" id="fc"></div>
+      <div class="sun" id="sun"></div>
+    </div>
+    <div class="right">
+      <div class="h">Family calendar</div>
+      <div class="cal" id="cal"></div>
+      <div class="bottom">
+        <div class="chores"><div class="h">Chores</div><ul id="chores"></ul></div>
+        <div class="kids"><div class="xmas" id="xmas"></div><div class="fact" id="fact"></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="radio" id="radio"><span class="lbl">Radio</span></div>
+</div>
+<div class="status" id="status"></div>
+<audio id="player" preload="none"></audio>
+
+<script>
+(function () {
+  // ---- Radio stations: edit freely. HLS (.m3u8) and plain MP3/AAC URLs both work. ----
+  var STATIONS = [
+    { name: "Radio 2",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_two&bitrate=320000" },
+    { name: "Radio 4",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_fourfm&bitrate=320000" },
+    { name: "6 Music",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_6music&bitrate=320000" },
+    { name: "Radio 1",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one&bitrate=320000" },
+    { name: "BBC CWR",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_coventry_warwickshire&bitrate=320000" },
+    { name: "4 Extra",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_four_extra&bitrate=320000" }
+  ];
+  var DATA_URL = "data.json";
+  var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function pad(n) { return n < 10 ? "0" + n : "" + n; }
+
+  // ---- Weather icons (inline SVG, keyed by the Kindle glyph) ----
+  var SUN = '<circle cx="32" cy="32" r="12" fill="#f2b632"/><g stroke="#f2b632" stroke-width="4" stroke-linecap="round"><line x1="32" y1="6" x2="32" y2="13"/><line x1="32" y1="51" x2="32" y2="58"/><line x1="6" y1="32" x2="13" y2="32"/><line x1="51" y1="32" x2="58" y2="32"/><line x1="13.6" y1="13.6" x2="18.5" y2="18.5"/><line x1="45.5" y1="45.5" x2="50.4" y2="50.4"/><line x1="13.6" y1="50.4" x2="18.5" y2="45.5"/><line x1="45.5" y1="18.5" x2="50.4" y2="13.6"/></g>';
+  var CLOUD = '<path d="M20 46h26a10 10 0 0 0 0-20 14 14 0 0 0-27-2 11 11 0 0 0 1 22z" fill="#b7c0cc"/>';
+  var ICONS = {
+    "☀": SUN,
+    "☁": CLOUD,
+    "☂": CLOUD + '<g stroke="#2f6db3" stroke-width="3.5" stroke-linecap="round"><line x1="24" y1="51" x2="21" y2="59"/><line x1="34" y1="51" x2="31" y2="59"/><line x1="44" y1="51" x2="41" y2="59"/></g>',
+    "❄": CLOUD + '<g fill="#7fb0ea"><circle cx="23" cy="54" r="3"/><circle cx="33" cy="57" r="3"/><circle cx="43" cy="54" r="3"/></g>',
+    "⚡": CLOUD + '<path d="M34 44l-8 12h7l-3 8 10-13h-7l3-7z" fill="#f2b632"/>'
+  };
+  function icon(g) { return '<svg viewBox="0 0 64 64">' + (ICONS[g] || CLOUD) + '</svg>'; }
+
+  // ---- Clock, date, countdown, night mode ----
+  function tick() {
+    var d = new Date();
+    $("clock").innerHTML = pad(d.getHours()) + ":" + pad(d.getMinutes());
+    $("date").innerHTML = DAYS[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()];
+    var h = d.getHours();
+    document.body.className = (h >= 21 || h < 6) ? "night" : "";
+    var xmas = new Date(d.getFullYear(), 11, 25);
+    var today = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    if (today > xmas) xmas = new Date(d.getFullYear() + 1, 11, 25);
+    var n = Math.round((xmas - today) / 86400000);
+    $("xmas").innerHTML = n === 0 ? "Happy Christmas!" : (n === 1 ? "1 sleep till Christmas!" : "&#9733; " + n + " sleeps till Christmas");
+  }
+
+  // ---- Data ----
+  function dayLabel(iso) {
+    var p = iso.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
+    var t = new Date(); t = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+    var diff = Math.round((d - t) / 86400000);
+    if (diff === 0) return "Today";
+    if (diff === 1) return "Tomorrow";
+    return DAYS[d.getDay()];
+  }
+
+  function draw(data) {
+    var w = data.weather, i, html;
+    $("nowIcon").innerHTML = icon(w.now_glyph);
+    $("temp").innerHTML = w.now_temp + "°";
+    $("cond").innerHTML = esc(w.now_label) + " &middot; wind " + w.wind + " mph";
+    html = "";
+    for (i = 0; i < w.rain_next.length; i++) {
+      html += "<span>" + w.rain_next[i][0] + " <b>" + w.rain_next[i][1] + "%</b></span>";
+    }
+    $("rain").innerHTML = html ? "Rain chance &nbsp;" + html : "";
+    html = "";
+    for (i = 0; i < w.days.length && i < 4; i++) {
+      var dd = w.days[i];
+      html += '<div class="d"><div class="dn">' + (i === 0 ? "Today" : dayLabel(dd.date).slice(0, 3)) + "</div>" + icon(dd.glyph) +
+              '<div class="hl">' + dd.hi + "° / " + dd.lo + '°</div><div class="rp">' + dd.rain + "%</div></div>";
+    }
+    $("fc").innerHTML = html;
+    $("sun").innerHTML = "Sunrise <b>" + w.sunrise + "</b> &nbsp;&middot;&nbsp; Sunset <b>" + w.sunset + "</b>";
+
+    html = "";
+    for (i = 0; i < data.calendar.length; i++) {
+      var day = data.calendar[i], pills = "", rows = "", j;
+      for (j = 0; j < day.events.length; j++) {
+        var e = day.events[j];
+        if (e.time) rows += '<div class="ev"><span class="t">' + e.time + '</span><span class="n">' + esc(e.title) + "</span></div>";
+        else pills += '<span class="pill">' + esc(e.title) + "</span>";
+      }
+      html += '<div class="day"><div class="dl">' + dayLabel(day.date) + "</div>" +
+              (pills || rows ? pills + rows : '<div class="none">Nothing on</div>') + "</div>";
+    }
+    $("cal").innerHTML = html;
+
+    html = "";
+    for (i = 0; i < data.chores.length && i < 4; i++) html += "<li>" + esc(data.chores[i]) + "</li>";
+    if (data.chores.length > 4) html += "<li>+" + (data.chores.length - 4) + " more</li>";
+    $("chores").innerHTML = html || '<li class="none">No chores listed</li>';
+    $("fact").innerHTML = esc(data.fact || "");
+    $("status").innerHTML = "";
+  }
+
+  function load() {
+    var x = new XMLHttpRequest();
+    x.open("GET", DATA_URL + "?t=" + Date.now(), true);
+    x.onreadystatechange = function () {
+      if (x.readyState !== 4) return;
+      if (x.status === 200) {
+        try { draw(JSON.parse(x.responseText)); } catch (e) { $("status").innerHTML = "Data error"; }
+      } else {
+        $("status").innerHTML = "Offline &ndash; showing last update";
+      }
+    };
+    x.send();
+  }
+
+  // ---- Radio ----
+  var player = $("player"), hls = null, current = -1, buttons = [];
+  var nativeHls = !!player.canPlayType && player.canPlayType("application/vnd.apple.mpegurl") !== "";
+
+  function setState(idx, cls) {
+    for (var i = 0; i < buttons.length; i++) buttons[i].className = "st" + (i === idx && cls ? " " + cls : "");
+  }
+  function stopRadio() {
+    if (hls) { hls.destroy(); hls = null; }
+    player.pause(); player.removeAttribute("src"); try { player.load(); } catch (e) {}
+    current = -1; setState(-1);
+  }
+  function startUrl(url) {
+    var isHls = /\.m3u8/.test(url);
+    if (isHls && !nativeHls && window.Hls && window.Hls.isSupported()) {
+      hls = new window.Hls(); hls.loadSource(url); hls.attachMedia(player);
+      hls.on(window.Hls.Events.MANIFEST_PARSED, function () { player.play(); });
+      hls.on(window.Hls.Events.ERROR, function (ev, d) { if (d && d.fatal) { $("status").innerHTML = "Station unavailable"; stopRadio(); } });
+    } else {
+      player.src = url; player.play();
+    }
+  }
+  function play(idx) {
+    if (idx === current) { stopRadio(); return; }
+    stopRadio(); current = idx; setState(idx, "loading");
+    var url = STATIONS[idx].url;
+    if (/\.m3u8/.test(url) && !nativeHls && !window.Hls) {
+      var s = document.createElement("script");
+      s.src = "https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js";
+      s.onload = function () { if (current === idx) startUrl(url); };
+      s.onerror = function () { $("status").innerHTML = "Couldn't load radio player"; stopRadio(); };
+      document.head.appendChild(s);
+    } else {
+      startUrl(url);
+    }
+  }
+  player.addEventListener("playing", function () { if (current >= 0) setState(current, "on"); });
+  player.addEventListener("error", function () { if (current >= 0) { $("status").innerHTML = "Station unavailable"; stopRadio(); } });
+
+  function buildRadio() {
+    var bar = $("radio");
+    for (var i = 0; i < STATIONS.length; i++) {
+      var b = document.createElement("button");
+      b.className = "st"; b.innerHTML = esc(STATIONS[i].name);
+      (function (k) { b.addEventListener("click", function () { play(k); }); })(i);
+      bar.appendChild(b); buttons.push(b);
+    }
+    var stop = document.createElement("button");
+    stop.className = "st stop"; stop.innerHTML = "&#9632; Stop";
+    stop.addEventListener("click", stopRadio);
+    bar.appendChild(stop);
+  }
+
+  buildRadio();
+  tick(); load();
+  setInterval(tick, 10000);
+  setInterval(load, 5 * 60 * 1000);
+  // Reload the whole page every 6 hours (when the radio is off) to pick up any design changes.
+  setInterval(function () { if (current < 0) location.reload(); }, 6 * 60 * 60 * 1000);
+})();
+</script>
+</body>
+</html>

@@ -7,6 +7,7 @@ Usage:
 import datetime as dt
 import os
 import sys
+import json
 import traceback
 
 sys.path.insert(0, os.path.dirname(__file__))
@@ -41,6 +42,8 @@ def sample_data(now):
                   {"time": "", "title": "Library books back"},
                   {"time": "09:30", "title": "Dog to groomer"},
                   {"time": "16:00", "title": "Football training"}],
+            today + dt.timedelta(days=2): [{"time": "", "title": "School dinners"},
+                                           {"time": "19:00", "title": "Parents' evening"}],
         },
         "chores": ["Empty dishwasher", "Feed the dog", "Tidy bedrooms", "Hoover lounge", "Water plants"],
         "fact": "An octopus has three hearts and blue blood.",
@@ -61,7 +64,7 @@ def live_data(now):
         data["calendar"] = {now.date(): [{"time": "", "title": "Calendar not connected yet"}]}
     else:
       try:
-        data["calendar"] = fetch.calendar(url)
+        data["calendar"] = fetch.calendar(url, days_ahead=3)
       except Exception:
         errors.append("calendar")
         traceback.print_exc()
@@ -71,9 +74,26 @@ def live_data(now):
     return data
 
 
+def to_json(data):
+    """Data for the colour kitchen page (dates as ISO strings)."""
+    w = dict(data["weather"])
+    w["days"] = [dict(d, date=d["date"].isoformat()) for d in w["days"]]
+    return {
+        "generated": data["now"].isoformat(timespec="minutes"),
+        "weather": w,
+        "calendar": [{"date": d.isoformat(), "events": ev} for d, ev in data["calendar"].items()],
+        "chores": data["chores"],
+        "fact": data["fact"],
+    }
+
+
 if __name__ == "__main__":
     now = dt.datetime.now(fetch.TZ)
     data = sample_data(now) if "--sample" in sys.argv else live_data(now)
     os.makedirs(OUT_DIR, exist_ok=True)
-    out = render(data, os.path.join(OUT_DIR, "dash.png"))
-    print("Wrote", out)
+    # Kindle shows today + tomorrow; the kitchen page gets everything
+    kindle = dict(data, calendar=dict(list(data["calendar"].items())[:2]))
+    out = render(kindle, os.path.join(OUT_DIR, "dash.png"))
+    with open(os.path.join(OUT_DIR, "data.json"), "w", encoding="utf-8") as f:
+        json.dump(to_json(data), f, ensure_ascii=False)
+    print("Wrote", out, "and data.json")
