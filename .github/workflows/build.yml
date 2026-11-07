@@ -46,7 +46,7 @@ jobs:
           mv public/dash.png "public/${IMAGE_NAME}.png"
           # Colour kitchen page (Fire tablet) lives under the same private name
           mkdir -p "public/${IMAGE_NAME}"
-          cp kitchen/index.html "public/${IMAGE_NAME}/index.html"
+          cp kitchen/* "public/${IMAGE_NAME}/"
           mv public/data.json "public/${IMAGE_NAME}/data.json"
           echo "nothing to see here" > public/index.html
 
