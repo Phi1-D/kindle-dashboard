@@ -105,6 +105,17 @@
   .chores, .kids { height: 130px; overflow: hidden; }
   .radio { height: 108px; overflow: hidden; padding-top: 8px; margin-top: 0; }
   .st { height: 42px; margin-bottom: 8px; }
+
+  /* Countdown and fact: two stacked half-height boxes */
+  .kidcol { width: 340px; height: 130px; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; }
+  .xbox, .fbox { height: 60px; border-radius: 14px; padding: 8px 14px; overflow: hidden; }
+  .xbox { background: #2f6db3; color: #fff; margin-bottom: 10px; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; }
+  .fbox { background: #f2c14e; color: #3a2c10; }
+  body.night .xbox { background: #24456e; }
+  body.night .fbox { background: #6b5320; color: #f6ead0; }
+  .xmas { font-size: 21px; font-weight: 700; }
+  .fh { font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase; font-weight: 700; opacity: .75; }
+  .fact { font-size: 14px; margin-top: 2px; line-height: 1.25; }
 </style>
 </head>
 <body>
@@ -123,7 +134,7 @@
       <div class="cal" id="cal"></div>
       <div class="bottom">
         <div class="chores"><div class="h">Chores</div><ul id="chores"></ul></div>
-        <div class="kids"><div class="xmas" id="xmas"></div><div class="fact" id="fact"></div></div>
+        <div class="kidcol"><div class="xbox"><div class="xmas" id="xmas"></div></div><div class="fbox"><div class="fh">Did you know?</div><div class="fact" id="fact"></div></div></div>
       </div>
     </div>
   </div>
