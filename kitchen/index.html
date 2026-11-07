@@ -134,6 +134,9 @@
   .fc .hl { font-size: 20px; font-weight: 600; }
   .fc .rp { font-size: 16px; font-weight: 600; }
   .sun { font-size: 19px; }
+
+  /* 8 stations + Stop: 5 per row, larger text */
+  .st { -webkit-flex: 1 1 17%; flex: 1 1 17%; font-size: 17px; }
 </style>
 </head>
 <body>
@@ -158,16 +161,14 @@
   </div>
   <div class="radio" id="radio"><span class="lbl">Radio</span></div>
 </div>
-<div class="status" id="status"></div><div style="position:fixed;left:6px;bottom:2px;font-size:9px;opacity:.35">v9</div>
+<div class="status" id="status"></div><div style="position:fixed;left:6px;bottom:2px;font-size:9px;opacity:.35">v10</div>
 <audio id="player" preload="none"></audio>
 
 <script>
 (function () {
   // ---- Radio stations: edit freely. HLS (.m3u8) and plain MP3/AAC URLs both work. ----
   var STATIONS = [
-    { name: "Radio 2",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_two&bitrate=320000" },
     { name: "Radio 4",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_fourfm&bitrate=320000" },
-    { name: "6 Music",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_6music&bitrate=320000" },
     { name: "Radio 1",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_one&bitrate=320000" },
     { name: "BBC CWR",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_coventry_warwickshire&bitrate=320000" },
     { name: "4 Extra",   url: "https://lsn.lv/bbcradio.m3u8?station=bbc_radio_four_extra&bitrate=320000" },
