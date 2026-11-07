@@ -110,7 +110,10 @@ def chores(path):
         return []
     with open(path, encoding="utf-8") as f:
         lines = [l.strip().lstrip("-•*◦☐").strip() for l in f]
-    return [l for l in lines if l and not l.startswith("#")]
+    items = [l for l in lines if l and not l.startswith("#")]
+    if items and items[0].lower() == "chores":  # Apple Notes includes the note title as the first line
+        items = items[1:]
+    return items
 
 
 def kid_fact(path, day):
