@@ -295,6 +295,15 @@
     var t = "translate(" + x + "px," + y + "px) scale(" + sc + ")";
     var a = $("app"); a.style.webkitTransform = t; a.style.transform = t;
   }
+  // Go full screen on the first tap anywhere (browsers only allow this after a tap).
+  function goFull() {
+    var el = document.documentElement;
+    if (document.fullscreenElement || document.webkitFullscreenElement) return;
+    var req = el.requestFullscreen || el.webkitRequestFullscreen || el.webkitRequestFullScreen;
+    if (req) { try { req.call(el); } catch (e) {} }
+  }
+  document.addEventListener("click", goFull, true);
+  document.addEventListener("touchend", goFull, true);
   window.addEventListener("resize", fit);
   window.addEventListener("orientationchange", function () { setTimeout(fit, 300); });
   fit();
