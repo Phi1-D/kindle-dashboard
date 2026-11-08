@@ -267,8 +267,59 @@
     return DAYS[d.getDay()];
   }
 
+  // ---- Live weather straight from Open-Meteo (doesn't depend on the GitHub build) ----
+  var lastData = null, liveW = null, liveAt = 0;
+  var WMO_LABEL = {0:"Clear",1:"Mostly clear",2:"Partly cloudy",3:"Overcast",45:"Fog",48:"Freezing fog",
+    51:"Light drizzle",53:"Drizzle",55:"Heavy drizzle",56:"Freezing drizzle",57:"Freezing drizzle",
+    61:"Light rain",63:"Rain",65:"Heavy rain",66:"Freezing rain",67:"Freezing rain",71:"Light snow",73:"Snow",
+    75:"Heavy snow",77:"Snow grains",80:"Showers",81:"Showers",82:"Heavy showers",85:"Snow showers",86:"Snow showers",
+    95:"Thunderstorm",96:"Thunder + hail",99:"Thunder + hail"};
+  function wmoGlyph(c) {
+    if (c <= 1) return "\u2600";
+    if (c <= 48) return "\u2601";
+    if (c >= 95) return "\u26A1";
+    if ((c >= 71 && c <= 77) || c === 85 || c === 86) return "\u2744";
+    return "\u2602";
+  }
+  function parseLocal(t) { // "2026-11-08T15:00" -> local Date
+    var a = t.split("T"), d = a[0].split("-"), h = (a[1] || "00:00").split(":");
+    return new Date(+d[0], +d[1] - 1, +d[2], +h[0], +h[1]);
+  }
+  function loadWeather() {
+    var url = "https://api.open-meteo.com/v1/forecast?latitude=52.41&longitude=-1.47" +
+      "&current=temperature_2m,weather_code,wind_speed_10m&hourly=precipitation_probability" +
+      "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset" +
+      "&timezone=Europe%2FLondon&forecast_days=5&wind_speed_unit=mph";
+    var x = new XMLHttpRequest();
+    x.open("GET", url, true);
+    x.onreadystatechange = function () {
+      if (x.readyState !== 4 || x.status !== 200) return;
+      try {
+        var d = JSON.parse(x.responseText), c = d.current, dy = d.daily, hr = d.hourly, i;
+        var now = new Date(), rain = [], days = [];
+        for (i = 0; i < hr.time.length && rain.length < 4; i++) {
+          var ts = parseLocal(hr.time[i]);
+          if (ts >= now && ts - now <= 12 * 3600000 && ts.getHours() % 3 === 0)
+            rain.push([pad(ts.getHours()) + ":00", hr.precipitation_probability[i]]);
+        }
+        for (i = 0; i < dy.time.length; i++) {
+          days.push({ date: dy.time[i], glyph: wmoGlyph(dy.weather_code[i]), label: WMO_LABEL[dy.weather_code[i]] || "",
+                      hi: Math.round(dy.temperature_2m_max[i]), lo: Math.round(dy.temperature_2m_min[i]),
+                      rain: dy.precipitation_probability_max[i] });
+        }
+        liveW = { now_temp: Math.round(c.temperature_2m), now_glyph: wmoGlyph(c.weather_code),
+                  now_label: WMO_LABEL[c.weather_code] || "", wind: Math.round(c.wind_speed_10m),
+                  sunrise: dy.sunrise[0].slice(-5), sunset: dy.sunset[0].slice(-5), rain_next: rain, days: days };
+        liveAt = Date.now();
+        if (lastData) draw(lastData);
+      } catch (e) {}
+    };
+    x.send();
+  }
+
   function draw(data) {
-    var w = data.weather, i, html;
+    lastData = data;
+    var w = (liveW && Date.now() - liveAt < 3 * 3600000) ? liveW : data.weather, i, html;
     $("nowIcon").innerHTML = icon(w.now_glyph);
     $("temp").innerHTML = w.now_temp + "°";
     $("cond").innerHTML = esc(w.now_label) + " &middot; wind " + w.wind + " mph";
@@ -328,7 +379,7 @@
     if (data.build && PAGE_BUILD.charAt(0) !== "_" && data.build !== PAGE_BUILD && current < 0) {
       location.replace(location.pathname + "?v=" + data.build);
     }
-    $("status").innerHTML = age > 120 ? "&#9888; Data last updated " + data.generated.slice(11, 16) + (age > 1440 ? " (over a day ago)" : "") : "";
+    $("status").innerHTML = age > 720 ? "&#9888; Calendar last updated " + data.generated.slice(11, 16) + (age > 1440 ? " (over a day ago)" : "") : "";
   }
 
   function load() {
@@ -435,9 +486,10 @@
   fit();
 
   buildRadio();
-  tick(); load();
+  tick(); load(); loadWeather();
   setInterval(tick, 10000);
   setInterval(load, 5 * 60 * 1000);
+  setInterval(loadWeather, 15 * 60 * 1000);
   // Reload the whole page every 6 hours (when the radio is off) to pick up any design changes.
   setInterval(function () { if (current < 0) location.reload(); }, 6 * 60 * 60 * 1000);
 })();
