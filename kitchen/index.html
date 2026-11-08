@@ -137,6 +137,40 @@
 
   /* 8 stations + Stop: 5 per row, larger text */
   .st { -webkit-flex: 1 1 17%; flex: 1 1 17%; font-size: 17px; }
+
+  /* Calendar: two columns (Today | Tomorrow); slimmer chores row gives the calendar more height */
+  .cal { height: 270px !important; background: transparent !important; padding: 0 !important; border-radius: 0; display: -webkit-flex; display: flex; }
+  .col { -webkit-flex: 1; flex: 1; min-width: 0; height: 270px; overflow: hidden; background: #fffaf2; border-radius: 16px; padding: 10px 14px; }
+  .col.today { margin-right: 10px; border-top: 5px solid #c0392b; padding-top: 7px; }
+  body.night .col { background: #1e2126; }
+  .col .dl { font-size: 17px; margin-bottom: 6px; }
+  .dsub { font-weight: 500; opacity: .7; }
+  .col .pill { font-size: 15px; margin: 0 0 6px 0; max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .col .ev { font-size: 17px; padding: 3px 0; line-height: 1.25; }
+  .col .ev .t { width: 56px; }
+  .col .ev .n { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .more { font-size: 15px; font-weight: 700; color: #8a6e4b; padding-top: 2px; }
+  body.night .more { color: #c9a878; }
+  .bottom, .chores, .kids, .kidcol { height: 108px !important; }
+  .chores { padding: 8px 14px; }
+  .chores li { font-size: 16px; padding: 0; }
+  .xbox { height: 40px; margin-bottom: 8px; padding: 0 14px; }
+  .xmas { font-size: 19px; }
+  .fbox { height: 60px; padding: 6px 14px; }
+  .fact { font-size: 14px; line-height: 1.2; }
+
+  .it.pi { display: inline-block; max-width: 100%; margin-right: 6px; vertical-align: top; }
+  .rain { white-space: nowrap; overflow: hidden; }
+
+  /* Keep every weather line full height; trim clock/icons slightly so it all fits */
+  .left > * { -webkit-flex-shrink: 0; flex-shrink: 0; }
+  .clock { font-size: 80px; }
+  .now { margin-top: 10px; }
+  .now svg { width: 62px; height: 62px; }
+  .temp { font-size: 58px; }
+  .rain { margin-top: 8px; height: 22px; }
+  .fc { margin-top: 8px; }
+  .fc svg { width: 32px; height: 32px; }
 </style>
 </head>
 <body>
@@ -161,7 +195,7 @@
   </div>
   <div class="radio" id="radio"><span class="lbl">Radio</span></div>
 </div>
-<div class="status" id="status"></div><div id="upd" style="position:fixed;left:8px;bottom:3px;font-size:12px;opacity:.55">v12</div>
+<div class="status" id="status"></div><div id="upd" style="position:fixed;left:8px;bottom:3px;font-size:12px;opacity:.55">v13</div>
 <audio id="player" preload="none"></audio>
 
 <script>
@@ -232,7 +266,7 @@
     for (i = 0; i < w.rain_next.length && i < 3; i++) {
       html += "<span>" + w.rain_next[i][0] + " <b>" + w.rain_next[i][1] + "%</b></span>";
     }
-    $("rain").innerHTML = html ? "Rain chance &nbsp;" + html : "";
+    $("rain").innerHTML = html ? "Rain &nbsp;" + html : "";
     html = "";
     var shown = 0;
     for (i = 0; i < w.days.length && shown < 4; i++) {
@@ -245,20 +279,33 @@
     $("fc").innerHTML = html;
     $("sun").innerHTML = "Sunrise <b>" + w.sunrise + "</b> &nbsp;&middot;&nbsp; Sunset <b>" + w.sunset + "</b>";
 
+    // Calendar: Today and Tomorrow side by side, each fitted with "+N more"
+    function isoOf(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+    var c0 = new Date(), c1 = new Date(c0.getFullYear(), c0.getMonth(), c0.getDate() + 1);
+    var cols = [[isoOf(c0), "Today", ""], [isoOf(c1), "Tomorrow", DAYS[c1.getDay()]]];
     html = "";
-    for (i = 0; i < data.calendar.length; i++) {
-      var day = data.calendar[i], pills = "", rows = "", j;
-      for (j = 0; j < day.events.length; j++) {
-        var e = day.events[j];
-        if (e.time) rows += '<div class="ev"><span class="t">' + e.time + '</span><span class="n">' + esc(e.title) + "</span></div>";
-        else pills += '<span class="pill">' + esc(e.title) + "</span>";
-      }
-      var dlab = dayLabel(day.date, true);
-      if (dlab === null) continue;
-      html += '<div class="day"><div class="dl">' + dlab + "</div>" +
-              (pills || rows ? pills + rows : '<div class="none">Nothing on</div>') + "</div>";
+    for (i = 0; i < cols.length; i++) {
+      var evs = [], j, k, items = "";
+      for (k = 0; k < data.calendar.length; k++) if (data.calendar[k].date === cols[i][0]) evs = data.calendar[k].events;
+      for (j = 0; j < evs.length; j++) if (!evs[j].time) items += '<div class="it pi"><span class="pill">' + esc(evs[j].title) + "</span></div>";
+      for (j = 0; j < evs.length; j++) if (evs[j].time) items += '<div class="it ev"><span class="t">' + evs[j].time + '</span><span class="n">' + esc(evs[j].title) + "</span></div>";
+      html += '<div class="col' + (i === 0 ? " today" : "") + '"><div class="dl">' + cols[i][1] +
+              (cols[i][2] ? ' <span class="dsub">' + cols[i][2] + "</span>" : "") + '</div><div class="items">' +
+              (items || '<div class="none">Nothing on</div>') + "</div></div>";
     }
     $("cal").innerHTML = html;
+    // Trim each column to fit, replacing hidden items with "+N more"
+    var colEls = $("cal").getElementsByClassName("col");
+    for (i = 0; i < colEls.length; i++) {
+      var col = colEls[i], box = col.getElementsByClassName("items")[0], hidden = 0, more = null;
+      while (col.scrollHeight > col.clientHeight + 1) {
+        var its = box.getElementsByClassName("it");
+        if (!its.length) break;
+        box.removeChild(its[its.length - 1]); hidden++;
+        if (!more) { more = document.createElement("div"); more.className = "more"; box.appendChild(more); }
+        more.innerHTML = "+" + hidden + " more";
+      }
+    }
 
     html = "";
     for (i = 0; i < data.chores.length && i < 4; i++) html += "<li>" + esc(data.chores[i]) + "</li>";
@@ -266,7 +313,7 @@
     $("chores").innerHTML = html || '<li class="none">No chores listed</li>';
     $("fact").innerHTML = esc(data.fact || "");
     var age = (Date.now() - new Date(data.generated).getTime()) / 60000;
-    $("upd").innerHTML = "Updated " + data.generated.slice(11, 16) + " &middot; v12";
+    $("upd").innerHTML = "Updated " + data.generated.slice(11, 16) + " &middot; v13";
     $("status").innerHTML = age > 120 ? "&#9888; Data last updated " + data.generated.slice(11, 16) + (age > 1440 ? " (over a day ago)" : "") : "";
   }
 
