@@ -180,6 +180,16 @@
   /* Playing station = green; Stop = solid red so it stands out */
   .st.on { background: #2e8b57 !important; border-color: #2e8b57 !important; color: #fff !important; }
   .st.stop { background: #c0392b !important; border-color: #c0392b !important; color: #fff !important; font-weight: 700; }
+
+  /* Bigger "Did you know?": taller fact box, slimmer countdown, calendar gives up 12px */
+  .bottom, .chores, .kids, .kidcol { height: 120px !important; }
+  .cal, .col { height: 266px !important; }
+  .kidcol { width: 336px; }
+  .chores li { font-size: 15px !important; }
+  .xbox { height: 36px !important; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  .fbox { height: 76px !important; padding: 6px 14px !important; -webkit-flex-shrink: 0; flex-shrink: 0; }
+  .fh { font-size: 12px; }
+  .fact { line-height: 1.18; margin-top: 1px; }
 </style>
 </head>
 <body>
@@ -317,6 +327,13 @@
     x.send();
   }
 
+  // Largest font (22px down to 14px) at which today's fact fits its box
+  function fitFact() {
+    var fb = document.querySelector(".fbox"), fe = $("fact"), fs = 22;
+    fe.style.fontSize = fs + "px";
+    while (fb.scrollHeight > fb.clientHeight + 1 && fs > 14) { fs--; fe.style.fontSize = fs + "px"; }
+  }
+
   function draw(data) {
     lastData = data;
     var w = (liveW && Date.now() - liveAt < 3 * 3600000) ? liveW : data.weather, i, html;
@@ -373,6 +390,7 @@
     if (data.chores.length > 4) html += "<li>+" + (data.chores.length - 4) + " more</li>";
     $("chores").innerHTML = html || '<li class="none">No chores listed</li>';
     $("fact").innerHTML = esc(data.fact || "");
+    fitFact();
     var age = (Date.now() - new Date(data.generated).getTime()) / 60000;
     $("upd").innerHTML = "Updated " + data.generated.slice(11, 16) + " &middot; " + (PAGE_BUILD.charAt(0) === "_" ? "dev" : PAGE_BUILD);
     // A newer version has been published: reload (but never interrupt the radio)

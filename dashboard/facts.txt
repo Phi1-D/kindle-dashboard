@@ -1,20 +1,20 @@
 # One fact per line. The dashboard picks a different one each day. Add your own.
 An octopus has three hearts and blue blood.
-Honey found in ancient Egyptian tombs was still safe to eat thousands of years later.
+Honey from ancient Egyptian tombs was still safe to eat.
 A day on Venus is longer than a year on Venus.
 Bananas are berries, but strawberries are not.
 Sloths can hold their breath for longer than dolphins can.
 A group of flamingos is called a flamboyance.
 Sharks have been around for longer than trees.
 Wombats do cube-shaped poos.
-There are more stars in the universe than grains of sand on all of Earth's beaches.
+There are more stars in the universe than grains of sand on Earth.
 Cows have best friends and get stressed when they're apart.
-The Eiffel Tower grows about 15 cm taller in summer because metal expands in the heat.
+The Eiffel Tower grows about 15 cm taller in hot summer weather.
 Butterflies taste with their feet.
 A bolt of lightning is about five times hotter than the surface of the Sun.
 Sea otters hold hands while they sleep so they don't drift apart.
 The heart of a blue whale is about the size of a small car.
-Hot water can freeze faster than cold water in some conditions. Scientists still argue about why.
+Hot water can sometimes freeze faster than cold water.
 Owls can't move their eyes, so they turn their whole heads instead.
 Penguins propose to each other with pebbles.
 The Moon is slowly moving away from Earth, about 4 cm every year.
@@ -37,7 +37,7 @@ A hummingbird's heart can beat more than 1,000 times a minute.
 An ostrich's eye is bigger than its brain.
 Bats are the only mammals that can truly fly.
 A snail can have thousands of tiny teeth.
-The blue whale is the biggest animal that has ever lived, bigger than any dinosaur.
+The blue whale is the biggest animal ever, bigger than any dinosaur.
 Flamingos are pink because of the shrimp and algae they eat.
 Pigs roll in mud to keep cool because they can hardly sweat.
 Dolphins sleep with one half of their brain at a time.
@@ -54,7 +54,7 @@ A woodpecker can peck about 20 times a second.
 Most frogs drink by soaking up water through their skin.
 A rhino's horn is made of keratin, the same stuff as your fingernails.
 Goldfish can remember things for months, not just a few seconds.
-Squirrels help plant trees: some of the nuts they bury and forget grow into new ones.
+Squirrels plant trees by forgetting where they buried their nuts.
 Birds are descended from dinosaurs, so a chicken is a distant relative of T. rex.
 Tigers have stripes on their skin as well as their fur.
 Giant pandas spend about 12 hours a day eating bamboo.
@@ -69,14 +69,14 @@ A dog's sense of smell is thousands of times better than ours.
 Rats giggle when they're tickled, but it's too high-pitched for us to hear.
 A narwhal's tusk is actually a very long tooth.
 The platypus is a mammal that lays eggs.
-A diving peregrine falcon can reach over 300 km/h, faster than any other animal.
+A diving peregrine falcon can fly at over 300 km/h.
 Octopuses can taste things with their suckers.
 Elephants can recognise themselves in a mirror.
 A hippo's sweat is reddish and works like a natural sunscreen.
 Koalas can sleep for up to about 20 hours a day.
 Crocodiles' ancestors lived alongside the dinosaurs.
 Some electric eels can give a shock of around 600 volts.
-Sea turtles return to the same beach where they hatched to lay their own eggs.
+Sea turtles lay their eggs on the beach where they hatched.
 A group of owls is called a parliament.
 # ---- Food ----
 Peanuts aren't nuts: they're legumes, like peas and beans.
@@ -94,7 +94,7 @@ Vanilla comes from the pod of an orchid flower.
 Broccoli, cabbage, cauliflower, kale and sprouts are all the same plant species.
 Rice is the main food for more than half the people in the world.
 A pizza margherita has the colours of the Italian flag: red, white and green.
-Carrots used to be purple or yellow; orange carrots became common in the 1600s.
+Carrots used to be purple or yellow, not orange.
 The heat of a chilli pepper is measured in Scoville units.
 Almonds come from a tree in the same family as peaches and cherries.
 There are well over 1,000 different kinds of cheese in the world.
@@ -111,7 +111,7 @@ Baked beans are usually haricot beans in tomato sauce.
 Lemons float in water, but limes usually sink.
 Strawberries are part of the rose family.
 # ---- Countries ----
-Russia is the biggest country in the world and stretches across 11 time zones.
+Russia is the biggest country and spans 11 time zones.
 Vatican City is the smallest country in the world.
 Canada has more lakes than the rest of the world put together.
 Indonesia is made up of more than 17,000 islands.
@@ -135,17 +135,17 @@ Chile is more than 4,000 km long but, on average, under 200 km wide.
 The Dead Sea, between Israel and Jordan, is so salty that you float easily.
 Australia's Great Barrier Reef is the biggest coral reef in the world.
 Venice in Italy is built on more than 100 small islands.
-London's Underground, opened in 1863, was the world's first underground railway.
+London's Underground (1863) was the world's first underground railway.
 Most of the Amazon rainforest is in Brazil.
-The Aztecs and Maya in Mexico were drinking chocolate hundreds of years ago.
+The Aztecs and Maya were drinking chocolate centuries ago.
 Ethiopia's calendar is about seven to eight years behind ours.
 Istanbul in Turkey is in two continents, Europe and Asia.
 Canada has the longest coastline of any country.
 Bhutan measures how happy its people are, called Gross National Happiness.
 Saudi Arabia has no permanent rivers.
-Norway has given London a Christmas tree for Trafalgar Square every year since 1947.
+Norway gives London its Trafalgar Square Christmas tree every year.
 France is the most visited country in the world.
 Japan has more than 100 active volcanoes.
 Wales has a red dragon on its flag.
 Denmark's flag is said to be the oldest national flag still in use.
-Mount Everest, the world's highest mountain, sits on the border of Nepal and China.
+Mount Everest sits on the border of Nepal and China.
