@@ -161,7 +161,7 @@
   </div>
   <div class="radio" id="radio"><span class="lbl">Radio</span></div>
 </div>
-<div class="status" id="status"></div><div style="position:fixed;left:6px;bottom:2px;font-size:9px;opacity:.35">v10</div>
+<div class="status" id="status"></div><div style="position:fixed;left:6px;bottom:2px;font-size:9px;opacity:.35">v11</div>
 <audio id="player" preload="none"></audio>
 
 <script>
@@ -216,7 +216,9 @@
     var p = iso.split("-"), d = new Date(+p[0], +p[1] - 1, +p[2]);
     var t = new Date(); t = new Date(t.getFullYear(), t.getMonth(), t.getDate());
     var diff = Math.round((d - t) / 86400000);
+    if (diff < 0) return null;
     if (diff === 0) return "Today";
+    if (diff === 1 && !arguments[1]) return DAYS[d.getDay()];
     if (diff === 1) return "Tomorrow";
     return DAYS[d.getDay()];
   }
@@ -232,9 +234,12 @@
     }
     $("rain").innerHTML = html ? "Rain chance &nbsp;" + html : "";
     html = "";
-    for (i = 0; i < w.days.length && i < 4; i++) {
-      var dd = w.days[i];
-      html += '<div class="d"><div class="dn">' + (i === 0 ? "Today" : dayLabel(dd.date).slice(0, 3)) + "</div>" + icon(dd.glyph) +
+    var shown = 0;
+    for (i = 0; i < w.days.length && shown < 4; i++) {
+      var dd = w.days[i], lab = dayLabel(dd.date);
+      if (lab === null) continue;  // a day that's already gone (stale data)
+      shown++;
+      html += '<div class="d"><div class="dn">' + (lab === "Today" ? "Today" : lab.slice(0, 3)) + "</div>" + icon(dd.glyph) +
               '<div class="hl">' + dd.hi + "° / " + dd.lo + '°</div><div class="rp">' + dd.rain + "%</div></div>";
     }
     $("fc").innerHTML = html;
@@ -248,7 +253,9 @@
         if (e.time) rows += '<div class="ev"><span class="t">' + e.time + '</span><span class="n">' + esc(e.title) + "</span></div>";
         else pills += '<span class="pill">' + esc(e.title) + "</span>";
       }
-      html += '<div class="day"><div class="dl">' + dayLabel(day.date) + "</div>" +
+      var dlab = dayLabel(day.date, true);
+      if (dlab === null) continue;
+      html += '<div class="day"><div class="dl">' + dlab + "</div>" +
               (pills || rows ? pills + rows : '<div class="none">Nothing on</div>') + "</div>";
     }
     $("cal").innerHTML = html;
@@ -258,7 +265,8 @@
     if (data.chores.length > 4) html += "<li>+" + (data.chores.length - 4) + " more</li>";
     $("chores").innerHTML = html || '<li class="none">No chores listed</li>';
     $("fact").innerHTML = esc(data.fact || "");
-    $("status").innerHTML = "";
+    var age = (Date.now() - new Date(data.generated).getTime()) / 60000;
+    $("status").innerHTML = age > 120 ? "&#9888; Data last updated " + data.generated.slice(11, 16) + (age > 1440 ? " (over a day ago)" : "") : "";
   }
 
   function load() {

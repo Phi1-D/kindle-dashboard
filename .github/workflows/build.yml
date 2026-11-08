@@ -2,9 +2,9 @@ name: Build Kindle dashboard
 
 on:
   schedule:
-    # Every 30 min, 05:00–21:30 UTC (covers roughly 06:00–22:30 UK in winter, 06:00–21:30 in summer).
-    # GitHub may run scheduled jobs a few minutes late; that's normal.
-    - cron: "*/30 5-21 * * *"
+    # Every 30 min, all day, at off-peak minutes (GitHub delays or drops runs at :00/:30).
+    # Scheduled runs can still be late or skipped occasionally; the pages show a warning if data is stale.
+    - cron: "13,43 * * * *"
   push:
     branches: [main]
   workflow_dispatch:
