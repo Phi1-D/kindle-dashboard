@@ -53,6 +53,13 @@ def section_title(d, y, label):
     return y + 30
 
 
+def days_to_christmas(today):
+    xmas = dt.date(today.year, 12, 25)
+    if today > xmas:
+        xmas = dt.date(today.year + 1, 12, 25)
+    return (xmas - today).days
+
+
 def christmas_countdown(today):
     xmas = dt.date(today.year, 12, 25)
     if today > xmas:
@@ -124,51 +131,49 @@ def render(data, out_path):
     f = font(15)
     d.text((W - M - text_w(d, upd, f), 22), upd, font=f, fill=LIGHT)
 
-    # ---- Weather now ----
+    # ---- Weather now (large) ----
     w = data["weather"]
-    y = 72
-    d.text((M, y - 4), w["now_glyph"], font=font(78), fill=BLACK)
-    d.text((M + 96, y - 6), f"{w['now_temp']}°", font=font(72, bold=True), fill=BLACK)
-    d.text((M + 96, y + 78), fit(d, w["now_label"], font(20), 230), font=font(20), fill=DARK)
+    y = 64
+    d.text((M, y), w["now_glyph"], font=font(90), fill=BLACK)
+    d.text((M + 112, y - 6), f"{w['now_temp']}°", font=font(88, bold=True), fill=BLACK)
+    d.text((M + 114, y + 96), fit(d, w["now_label"], font(24), 270), font=font(24), fill=BLACK)
     today_fc = w["days"][0]
-    d.text((M + 96, y + 104), f"High {today_fc['hi']}°  Low {today_fc['lo']}°  Wind {w['wind']} mph",
-           font=font(16), fill=DARK)
+    d.text((M, y + 132), f"High {today_fc['hi']}°   Low {today_fc['lo']}°   Wind {w['wind']} mph",
+           font=font(21, bold=True), fill=DARK)
 
     # Sunrise / sunset (right column)
-    rx = 410
-    d.text((rx, y + 2), "Sunrise", font=font(15), fill=MID)
-    d.text((rx, y + 20), "☀↑ " + w["sunrise"], font=font(26, bold=True), fill=BLACK)
-    d.text((rx, y + 58), "Sunset", font=font(15), fill=MID)
-    d.text((rx, y + 76), "☀↓ " + w["sunset"], font=font(26, bold=True), fill=BLACK)
+    rx = 420
+    d.text((rx, y + 2), "Sunrise", font=font(18), fill=DARK)
+    d.text((rx, y + 24), w["sunrise"], font=font(34, bold=True), fill=BLACK)
+    d.text((rx, y + 68), "Sunset", font=font(18), fill=DARK)
+    d.text((rx, y + 90), w["sunset"], font=font(34, bold=True), fill=BLACK)
 
     # Rain chance next 12h
-    y = 210
+    y = 230
     if w["rain_next"]:
-        d.text((M, y), "Rain chance", font=font(15, bold=True), fill=DARK)
-        x = M + 110
-        for t, p in w["rain_next"]:
-            d.text((x, y), f"{t} {p}%", font=font(15), fill=BLACK if p >= 50 else DARK)
-            x += 112
+        d.text((M, y), "Rain", font=font(20, bold=True), fill=DARK)
+        x = M + 66
+        for t, p in w["rain_next"][:3]:
+            d.text((x, y), f"{t} {p}%", font=font(20, bold=p >= 50), fill=BLACK)
+            x += 160
 
     # 3-day forecast
-    y = 240
+    y = 264
     col = (W - 2 * M) // 3
     for i, day in enumerate(w["days"][1:4]):
         x = M + i * col
-        d.rounded_rectangle([x + 2, y, x + col - 6, y + 74], radius=10, outline=LIGHT, width=2)
-        d.text((x + 14, y + 6), day["date"].strftime("%a"), font=font(18, bold=True), fill=BLACK)
-        d.text((x + 14, y + 32), day["glyph"], font=font(30), fill=BLACK)
-        d.text((x + 56, y + 32), f"{day['hi']}°/{day['lo']}°", font=font(18), fill=BLACK)
-        d.text((x + 56, y + 54), f"rain {day['rain']}%", font=font(13), fill=DARK)
+        d.rounded_rectangle([x + 2, y, x + col - 6, y + 96], radius=12, outline=MID, width=2)
+        d.text((x + 14, y + 8), day["date"].strftime("%a"), font=font(23, bold=True), fill=BLACK)
+        d.text((x + 12, y + 42), day["glyph"], font=font(40), fill=BLACK)
+        d.text((x + 66, y + 38), f"{day['hi']}°/{day['lo']}°", font=font(25, bold=True), fill=BLACK)
+        d.text((x + 66, y + 68), f"rain {day['rain']}%", font=font(18), fill=BLACK)
 
-    # ---- Bottom strips (laid out first so the calendar can take all remaining space) ----
-    kid_top = H - 74
-    chores = data["chores"]
-    chores_y = kid_top - 34 if chores else None
-    cal_bottom = (chores_y if chores else kid_top) - 8
+    # ---- Kids boxes at the bottom: countdown | fact ----
+    kid_top = H - 98
+    cal_bottom = kid_top - 10
 
     # ---- Calendar ----
-    y = section_title(d, 334, "Family calendar")
+    y = section_title(d, 374, "Family calendar")
     days = list(data["calendar"].items())
     for i, (day, events) in enumerate(days):
         # Today gets priority; leave at least ~80px for each later day
@@ -176,19 +181,26 @@ def render(data, out_path):
         label = "Today" if day == today else ("Tomorrow" if day == today + dt.timedelta(days=1) else day.strftime("%A"))
         y = draw_day(d, y, label, events, limit) + 4
 
-    # ---- Chores: one compact line ----
-    if chores:
-        d.line([(M, chores_y - 6), (W - M, chores_y - 6)], fill=LIGHT, width=2)
-        f_lab, f = font(17, bold=True), font(17)
-        d.text((M, chores_y), "Chores", font=f_lab, fill=DARK)
-        x0 = M + text_w(d, "Chores", f_lab) + 12
-        d.text((x0, chores_y), fit(d, "  ·  ".join(chores), f, W - M - x0), font=f, fill=BLACK)
+    # Countdown: black box, white text
+    xw = 222
+    d.rounded_rectangle([M - 6, kid_top, M - 6 + xw, H - 8], radius=12, fill=BLACK)
+    n = days_to_christmas(today)
+    if n == 0:
+        l1, l2 = "Happy", "Christmas!"
+    else:
+        l1, l2 = f"★ {n} sleep{'s' if n != 1 else ''}", "till Christmas"
+    d.text((M + 8, kid_top + 12), l1, font=font(30, bold=True), fill=WHITE)
+    d.text((M + 8, kid_top + 52), l2, font=font(21), fill=WHITE)
 
-    # ---- Kids strip ----
-    d.rounded_rectangle([M - 6, kid_top, W - M + 6, H - 8], radius=12, fill=LIGHT)
-    d.text((M + 6, kid_top + 6), "★ " + christmas_countdown(today), font=font(21, bold=True), fill=BLACK)
+    # Fact: light grey box
+    fx = M - 6 + xw + 10
+    d.rounded_rectangle([fx, kid_top, W - M + 6, H - 8], radius=12, fill=LIGHT)
+    d.text((fx + 12, kid_top + 8), "DID YOU KNOW?", font=font(14, bold=True), fill=DARK)
     if data.get("fact"):
-        d.text((M + 6, kid_top + 36), fit(d, data["fact"], font(17), W - 2 * M - 12), font=font(17), fill=BLACK)
+        ly = kid_top + 30
+        for ln in wrap(d, data["fact"], font(18), W - M + 6 - fx - 24, 3):
+            d.text((fx + 12, ly), ln, font=font(18), fill=BLACK)
+            ly += 22
 
     img.save(out_path, "PNG", optimize=True)
     return out_path

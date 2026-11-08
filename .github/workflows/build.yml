@@ -47,6 +47,8 @@ jobs:
           # Colour kitchen page (Fire tablet) lives under the same private name
           mkdir -p "public/${IMAGE_NAME}"
           cp kitchen/* "public/${IMAGE_NAME}/"
+          # Stamp the page with this build so open copies can spot a newer version and reload
+          sed -i "s/__BUILD__/${GITHUB_SHA::7}/g" "public/${IMAGE_NAME}/index.html"
           mv public/data.json "public/${IMAGE_NAME}/data.json"
           echo "nothing to see here" > public/index.html
 

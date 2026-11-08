@@ -195,7 +195,7 @@
   </div>
   <div class="radio" id="radio"><span class="lbl">Radio</span></div>
 </div>
-<div class="status" id="status"></div><div id="upd" style="position:fixed;left:8px;bottom:3px;font-size:12px;opacity:.55">v13</div>
+<div class="status" id="status"></div><div id="upd" style="position:fixed;left:8px;bottom:3px;font-size:12px;opacity:.55"></div>
 <audio id="player" preload="none"></audio>
 
 <script>
@@ -212,6 +212,7 @@
     { name: "Fun Kids",     url: "https://listen-funkids.sharp-stream.com/funkids.mp3" }
   ];
   var DATA_URL = "data.json";
+  var PAGE_BUILD = "__BUILD__";  // replaced with the build id when published
   var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
   var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 
@@ -313,7 +314,11 @@
     $("chores").innerHTML = html || '<li class="none">No chores listed</li>';
     $("fact").innerHTML = esc(data.fact || "");
     var age = (Date.now() - new Date(data.generated).getTime()) / 60000;
-    $("upd").innerHTML = "Updated " + data.generated.slice(11, 16) + " &middot; v13";
+    $("upd").innerHTML = "Updated " + data.generated.slice(11, 16) + " &middot; " + (PAGE_BUILD.charAt(0) === "_" ? "dev" : PAGE_BUILD);
+    // A newer version has been published: reload (but never interrupt the radio)
+    if (data.build && PAGE_BUILD.charAt(0) !== "_" && data.build !== PAGE_BUILD && current < 0) {
+      location.replace(location.pathname + "?v=" + data.build);
+    }
     $("status").innerHTML = age > 120 ? "&#9888; Data last updated " + data.generated.slice(11, 16) + (age > 1440 ? " (over a day ago)" : "") : "";
   }
 

@@ -84,6 +84,7 @@ def to_json(data):
         "calendar": [{"date": d.isoformat(), "events": ev} for d, ev in data["calendar"].items()],
         "chores": data["chores"],
         "fact": data["fact"],
+        "build": os.environ.get("GITHUB_SHA", "")[:7],
     }
 
 
