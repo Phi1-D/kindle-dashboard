@@ -161,7 +161,7 @@
   </div>
   <div class="radio" id="radio"><span class="lbl">Radio</span></div>
 </div>
-<div class="status" id="status"></div><div style="position:fixed;left:6px;bottom:2px;font-size:9px;opacity:.35">v11</div>
+<div class="status" id="status"></div><div id="upd" style="position:fixed;left:8px;bottom:3px;font-size:12px;opacity:.55">v12</div>
 <audio id="player" preload="none"></audio>
 
 <script>
@@ -266,6 +266,7 @@
     $("chores").innerHTML = html || '<li class="none">No chores listed</li>';
     $("fact").innerHTML = esc(data.fact || "");
     var age = (Date.now() - new Date(data.generated).getTime()) / 60000;
+    $("upd").innerHTML = "Updated " + data.generated.slice(11, 16) + " &middot; v12";
     $("status").innerHTML = age > 120 ? "&#9888; Data last updated " + data.generated.slice(11, 16) + (age > 1440 ? " (over a day ago)" : "") : "";
   }
 
