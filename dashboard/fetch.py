@@ -119,4 +119,8 @@ def chores(path):
 def kid_fact(path, day):
     with open(path, encoding="utf-8") as f:
         facts = [l.strip() for l in f if l.strip() and not l.startswith("#")]
-    return facts[day.toordinal() % len(facts)] if facts else ""
+    if not facts:
+        return ""
+    import random
+    random.Random(2026).shuffle(facts)  # fixed shuffle: mixes animals/food/countries, same order every day
+    return facts[day.toordinal() % len(facts)]
