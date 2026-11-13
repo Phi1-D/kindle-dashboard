@@ -90,7 +90,12 @@ def to_json(data):
 
 if __name__ == "__main__":
     now = dt.datetime.now(fetch.TZ)
-    data = sample_data(now) if "--sample" in sys.argv else live_data(now)
+    try:
+        data = sample_data(now) if "--sample" in sys.argv else live_data(now)
+    except Exception:
+        # Weather still unreachable after retries: publish nothing, so the screens keep the last good version.
+        print("::warning::Weather service unreachable after retries; keeping the last published dashboard.")
+        sys.exit(0)
     os.makedirs(OUT_DIR, exist_ok=True)
     # Kindle shows today + tomorrow; the kitchen page gets everything
     kindle = dict(data, calendar=dict(list(data["calendar"].items())[:2]))

@@ -25,10 +25,20 @@ WMO = {
 }
 
 
-def _get(url, timeout=20):
+def _get(url, timeout=30, attempts=4):
+    """Fetch a URL, retrying brief network blips (waits 5s, 15s, 30s between tries)."""
+    import time
     req = urllib.request.Request(url, headers={"User-Agent": "family-kindle-dashboard/1.0"})
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return r.read()
+    for i in range(attempts):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                return r.read()
+        except Exception as e:
+            if i == attempts - 1:
+                raise
+            wait = (5, 15, 30)[min(i, 2)]
+            print(f"Fetch failed ({e}); retrying in {wait}s")
+            time.sleep(wait)
 
 
 def weather():
